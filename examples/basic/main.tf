@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azuread = {
       source  = "hashicorp/azuread"
-      version = ">= 2.0"
+      version = ">= 3.0"
     }
   }
 }
@@ -62,6 +62,8 @@ module "app_registrations" {
         requested_access_token_version = 2
         oauth2_permission_scopes = [
           {
+            # IMPORTANT: Generate a new unique UUID for production use
+            # Example: uuidgen or New-Guid in PowerShell
             id                         = "00000000-0000-0000-0000-000000000001"
             admin_consent_description  = "Allow the application to access the API on behalf of the signed-in user."
             admin_consent_display_name = "Access API"
@@ -76,6 +78,8 @@ module "app_registrations" {
 
       app_roles = [
         {
+          # IMPORTANT: Generate a new unique UUID for production use
+          # Example: uuidgen or New-Guid in PowerShell
           id                   = "00000000-0000-0000-0000-000000000002"
           allowed_member_types = ["User", "Application"]
           description          = "Admins can manage all resources"

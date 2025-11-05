@@ -289,7 +289,11 @@ applications = {
 - Application registrations and service principals are managed separately
 - Set `create_service_principal = false` if you only want to create the application registration without the enterprise application
 - Make sure you have the necessary permissions in Azure Entra ID to create applications and service principals
-- UUIDs for app roles and OAuth2 permission scopes must be unique and should be generated before use
+- **IMPORTANT**: UUIDs for app roles and OAuth2 permission scopes must be unique and should be generated before use
+  - Linux/macOS: Use `uuidgen` command
+  - Windows PowerShell: Use `New-Guid` cmdlet
+  - Online: Use a UUID generator tool
+  - Never use the placeholder UUIDs from examples in production
 
 ## License
 

@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azuread = {
       source  = "hashicorp/azuread"
-      version = ">= 2.0"
+      version = ">= 3.0"
     }
   }
 }
@@ -104,6 +104,8 @@ module "app_registrations" {
         requested_access_token_version = 2
         oauth2_permission_scopes = [
           {
+            # IMPORTANT: Generate new unique UUIDs for production use
+            # Example: uuidgen or New-Guid in PowerShell
             id                         = "d1e2f3a4-b5c6-7890-abcd-ef1234567890"
             admin_consent_description  = "Allows the application to access the multi-tenant API"
             admin_consent_display_name = "Access Multi-Tenant API"
@@ -118,6 +120,7 @@ module "app_registrations" {
 
       app_roles = [
         {
+          # IMPORTANT: Generate new unique UUIDs for production use
           id                   = "e2f3a4b5-c6d7-8901-bcde-f12345678901"
           allowed_member_types = ["User"]
           description          = "Users with this role can administer the application"
@@ -126,6 +129,7 @@ module "app_registrations" {
           value                = "Admin"
         },
         {
+          # IMPORTANT: Generate new unique UUIDs for production use
           id                   = "f3a4b5c6-d7e8-9012-cdef-123456789012"
           allowed_member_types = ["User"]
           description          = "Regular users of the application"

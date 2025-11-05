@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azuread = {
       source  = "hashicorp/azuread"
-      version = ">= 2.0"
+      version = ">= 3.0"
     }
   }
 }
@@ -30,6 +30,8 @@ module "app_registrations" {
         requested_access_token_version = 2
         oauth2_permission_scopes = [
           {
+            # IMPORTANT: Generate new unique UUIDs for production use
+            # Example: uuidgen or New-Guid in PowerShell
             id                         = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
             admin_consent_description  = "Allows the application to read data from the API"
             admin_consent_display_name = "Read API Data"
@@ -40,6 +42,7 @@ module "app_registrations" {
             value                      = "API.Read"
           },
           {
+            # IMPORTANT: Generate new unique UUIDs for production use
             id                         = "b2c3d4e5-f6a7-8901-bcde-f12345678901"
             admin_consent_description  = "Allows the application to write data to the API"
             admin_consent_display_name = "Write API Data"
@@ -54,6 +57,7 @@ module "app_registrations" {
 
       app_roles = [
         {
+          # IMPORTANT: Generate new unique UUIDs for production use
           id                   = "c3d4e5f6-a7b8-9012-cdef-123456789012"
           allowed_member_types = ["Application"]
           description          = "Allows daemon apps to access the API"
