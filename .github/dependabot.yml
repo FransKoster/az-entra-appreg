@@ -1,0 +1,44 @@
+version: 2
+updates:
+  - package-ecosystem: "terraform"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "terraform"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "docker"
+
+  # Example: optionally enable weekly updates for GitHub Actions in the examples folder
+  - package-ecosystem: "github-actions"
+    directory: "/examples"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "examples"
+
+# Optionally ignore certain frequently bumped providers or modules
+ignore:
+  - dependency-name: "hashicorp/azurerm"
+    update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+    # Reasons: often pinned by Terraform Registry constraints; remove if you want updates
