@@ -9,17 +9,28 @@ on:
       - "examples/**"
 
 jobs:
+  detect-examples:
+    name: Detect examples
+    runs-on: ubuntu-latest
+    outputs:
+      dirs: ${{ steps.set-matrix.outputs.dirs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: set-matrix
+        name: Build examples matrix
+        run: |
+          # Build a JSON array of example directories under ./examples that contain at least one .tf file
+          dirs=$(python3 -c 'import os,json; root="examples"; dirs=[]; [dirs.append(os.path.join(root,d)) for d in sorted(os.listdir(root)) if os.path.isdir(os.path.join(root,d)) and any(f.endswith(".tf") for f in os.listdir(os.path.join(root,d)))]; print(json.dumps(dirs))')
+          echo "dirs=$dirs" >> "$GITHUB_OUTPUT"
+
   terraform-examples:
+    needs: detect-examples
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dir:
-          [
-            examples/basic,
-            examples/api-with-client,
-            examples/multi-tenant,
-            examples/per-team,
-          ]
+        dir: ${{ fromJson(needs.detect-examples.outputs.dirs) }}
 
     steps:
       - name: Checkout
