@@ -1,0 +1,42 @@
+name: CI - examples Terraform
+
+on:
+  push:
+    paths:
+      - "examples/**"
+  pull_request:
+    paths:
+      - "examples/**"
+
+jobs:
+  terraform-examples:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir:
+          [
+            examples/basic,
+            examples/api-with-client,
+            examples/multi-tenant,
+            examples/per-team,
+          ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.5.7"
+
+      - name: Terraform fmt check
+        run: |
+          echo "Checking format in ${{ matrix.dir }}"
+          terraform -chdir=${{ matrix.dir }} fmt -check
+
+      - name: Terraform init and validate
+        run: |
+          echo "Initializing and validating ${matrix.dir}"
+          terraform -chdir=${{ matrix.dir }} init -backend=false
+          terraform -chdir=${{ matrix.dir }} validate
