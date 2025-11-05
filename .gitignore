@@ -35,3 +35,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Lock files should not be committed for reusable modules
+# Consumers should manage their own provider versions
+.terraform.lock.hcl
