@@ -193,13 +193,13 @@ Each application in the `applications` map supports the following attributes:
 | Name | Version |
 |------|---------|
 | terraform | >= 1.0 |
-| azuread | >= 2.0 |
+| azuread | >= 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| azuread | >= 2.0 |
+| azuread | >= 3.0 |
 
 ## Resources
 
