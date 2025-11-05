@@ -30,7 +30,7 @@ module "app_registrations" {
       display_name     = "My Web Application"
       description      = "A sample web application"
       sign_in_audience = "AzureADMyOrg"
-      
+
       web = {
         homepage_url  = "https://myapp.example.com"
         redirect_uris = ["https://myapp.example.com/auth/callback"]
@@ -91,7 +91,7 @@ module "app_registrations" {
       description      = "An API with custom scopes and roles"
       sign_in_audience = "AzureADMyOrg"
       identifier_uris  = ["api://myapi"]
-      
+
       api = {
         requested_access_token_version = 2
         oauth2_permission_scopes = [
