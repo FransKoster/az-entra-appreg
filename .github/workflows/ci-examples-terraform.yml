@@ -17,7 +17,7 @@ on:
 jobs:
   detect-examples:
     name: Detect examples
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       dirs: ${{ steps.set-matrix.outputs.dirs }}
     steps:
@@ -51,7 +51,7 @@ jobs:
 
   terraform-examples:
     needs: detect-examples
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         dir: ${{ fromJson(needs.detect-examples.outputs.dirs) }}
@@ -79,7 +79,7 @@ jobs:
   print-matrix:
     name: Print detected examples matrix
     needs: detect-examples
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: ${{ github.event.inputs.print_matrix == 'true' }}
     steps:
       - name: Checkout
