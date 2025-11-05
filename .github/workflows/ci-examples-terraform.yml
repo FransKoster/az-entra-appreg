@@ -1,0 +1,90 @@
+name: CI - examples Terraform
+
+on:
+  push:
+    paths:
+      - "examples/**"
+  pull_request:
+    paths:
+      - "examples/**"
+  workflow_dispatch:
+    inputs:
+      print_matrix:
+        description: "If true, print the detected examples matrix and exit"
+        required: false
+        default: "false"
+
+jobs:
+  detect-examples:
+    name: Detect examples
+    runs-on: ubuntu-latest
+    outputs:
+      dirs: ${{ steps.set-matrix.outputs.dirs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: set-matrix
+        name: Build examples matrix
+        run: |
+          # Build a JSON array of example directories under ./examples that contain at least one .tf file
+          set -eu
+          dirs=()
+          for d in examples/*; do
+            if [ -d "$d" ]; then
+              # Check for any .tf files (nullglob not set by default in sh; use glob test)
+              tf_count=$(sh -c 'set -f; for f in "'"$d"'"/*.tf; do [ -e "$f" ] && echo 1 && break; done' || true)
+              if [ -n "$tf_count" ]; then
+                dirs+=("$d")
+              fi
+            fi
+          done
+          # Convert newline-separated dirs to JSON array using python (available on runners)
+          if [ ${#dirs[@]} -eq 0 ]; then
+            echo "dirs=[]" >> "$GITHUB_OUTPUT"
+          else
+            # Print each dir on its own line and convert to JSON
+            printf '%s\n' "${dirs[@]}" | python3 -c 'import sys,json; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))' > /tmp/dirs.json
+            dirs_json=$(cat /tmp/dirs.json)
+            echo "dirs=$dirs_json" >> "$GITHUB_OUTPUT"
+          fi
+
+  terraform-examples:
+    needs: detect-examples
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir: ${{ fromJson(needs.detect-examples.outputs.dirs) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.5.7"
+
+      - name: Terraform fmt check
+        run: |
+          echo "Checking format in ${{ matrix.dir }}"
+          terraform -chdir=${{ matrix.dir }} fmt -check
+
+      - name: Terraform init and validate
+        run: |
+          echo "Initializing and validating ${{ matrix.dir }}"
+          terraform -chdir=${{ matrix.dir }} init -backend=false
+          terraform -chdir=${{ matrix.dir }} validate
+
+  print-matrix:
+    name: Print detected examples matrix
+    needs: detect-examples
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.print_matrix == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Print matrix
+        run: |
+          echo "Detected examples: ${{ needs.detect-examples.outputs.dirs }}"
